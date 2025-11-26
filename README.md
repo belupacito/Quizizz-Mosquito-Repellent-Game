@@ -7,5 +7,5 @@ One of the games is the mosquito repellent game, which I find very fun, which is
 
 NOTE:
 This is a work in progress, currently my first update, so the work is rough.
-The functionality to reset the game isn't completed yet.
+The functionality to reset the game is now completed.
 
