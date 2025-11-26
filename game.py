@@ -2,7 +2,6 @@ import pygame as pg
 import os
 import math
 import random as rd
-import time
 
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -85,8 +84,8 @@ def move_towards_target(x, y, target_x, target_y, speed):
 
     return x, y
 
-# Function to generate a random position at least 150 pixels from center
-def get_random_position_away_from_center(min_distance=175):
+# Function to generate a random position at least 225 pixels from center
+def get_good_position(min_distance=225): # Away from Center, and also made the obstacles not overlap with each other
     center_x = screen_width // 2
     center_y = screen_height // 2
 
@@ -96,7 +95,7 @@ def get_random_position_away_from_center(min_distance=175):
 
         # Calculate distance from center
         distance = math.sqrt((x - center_x)**2 + (y - center_y)**2)
-
+        
         # If distance is at least min_distance, return the position
         if distance >= min_distance:
             return x, y
@@ -106,7 +105,7 @@ class Obstacle:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.speed = 0.2  # Movement speed toward center
+        self.speed = 0.3  # Movement speed toward center
         self.image = obstacle_image
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -134,12 +133,9 @@ def game_over():
     text = font.render(f'Game Over! Press R to Restart. Score: {score}', True, (255, 0, 0))
     text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
     screen.blit(text, text_rect)
-
     restart_text = font.render('Press R to Restart', True, (255, 255, 255))
     restart_rect = restart_text.get_rect(center=(screen_width // 2, screen_height // 2))
     screen.blit(restart_text, restart_rect)
-
-    pg.display.update()
 
 def draw_score(score):
     score_text = font.render(f"Score: {score}", True, (255, 255, 255))
@@ -167,23 +163,23 @@ def gameloop():
                 if event.key == pg.K_SPACE and not game_over_flag:
                     ray = Ray(scaled_image_rect.centerx, scaled_image_rect.centery, direction)
                     rays.append(ray)
-                    score += 1  # Increase score when shooting
                 elif event.key == pg.K_r:  # Reset game with 'R' key
                     reset_game()
+                    obstacles.clear()
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1 and not game_over_flag:  # Left mouse button
                     # Create a new ray in the direction of the saber
                     ray = Ray(scaled_image_rect.centerx, scaled_image_rect.centery, direction)
                     rays.append(ray)
-                    score += 1  # Increase score when shooting
                 elif event.button == 1 and game_over_flag:  # Restart on click when game over
                     reset_game()
+                    obstacles.clear()
 
         if not game_over_flag:
             # Spawn obstacles randomly outside the event loop
             if rd.randint(1, 300) == 1:  # 2% chance per frame
                 # Get a position at least 150 pixels away from center
-                x, y = get_random_position_away_from_center(150)
+                x, y = get_good_position(150)
                 obstacle = Obstacle(x, y)
                 obstacles.append(obstacle)
 
@@ -213,7 +209,7 @@ def gameloop():
                             rays.remove(ray)
                         if obstacle in obstacles:
                             obstacles.remove(obstacle)
-                        score += 10  # Increase score when hitting obstacle
+                        score += 1  # Increase score when hitting obstacle
                         break  # Break to avoid checking the same ray against other obstacles
 
             # Check collision with saber
