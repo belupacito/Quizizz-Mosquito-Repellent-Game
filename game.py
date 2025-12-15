@@ -33,7 +33,7 @@ obstacle_image = pg.image.load(obstacle_image).convert_alpha()
 new_width = saberhilt_image.get_width() // 2
 new_height = saberhilt_image.get_height() // 2
 scaled_image = pg.transform.scale(saberhilt_image, (new_width, new_height))
-rays_image = pg.transform.scale(rays_image, (screen_width//8, screen_height//8))
+rays_image = pg.transform.scale(rays_image, (screen_width//30, screen_height//30))
 background_image = pg.transform.scale(background_image, (screen_width, screen_height))
 
 # Position images
@@ -243,3 +243,4 @@ def gameloop():
 
 gameloop()
 pg.quit()
+
